@@ -3,6 +3,7 @@ package com.huantansheng.easyphotos.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.huantansheng.easyphotos.setting.Setting;
 import com.huantansheng.easyphotos.ui.widget.subscaleview.ImageSource;
 import com.huantansheng.easyphotos.ui.widget.subscaleview.SubsamplingScaleImageView;
+import com.huantansheng.easyphotos.utils.uri.UriUtils;
 
 import java.util.ArrayList;
 
@@ -165,16 +167,18 @@ public class PreviewPhotosAdapter extends RecyclerView.Adapter<PreviewPhotosAdap
             ivPhoto.setVisibility(View.GONE);
             ivBigPhoto.setVisibility(View.GONE);
 
+            Uri uri = UriUtils.getUriByPath(path);
+
             if (path.endsWith(Type.GIF) || type.endsWith(Type.GIF)) {
                 ivPhoto.setVisibility(View.VISIBLE);
-                Setting.imageEngine.loadGif(ivPhoto.getContext(), path, ivPhoto);
+                Setting.imageEngine.loadGif(ivPhoto.getContext(), uri, ivPhoto);
             } else {
                 if (ratio > 3 || ratio < 0.34) {
                     ivBigPhoto.setVisibility(View.VISIBLE);
                     ivBigPhoto.setImage(ImageSource.uri(path));
                 } else {
                     ivPhoto.setVisibility(View.VISIBLE);
-                    Setting.imageEngine.loadPhoto(ivPhoto.getContext(), path, ivPhoto);
+                    Setting.imageEngine.loadPhoto(ivPhoto.getContext(), uri, ivPhoto);
                 }
             }
 
@@ -240,7 +244,7 @@ public class PreviewPhotosAdapter extends RecyclerView.Adapter<PreviewPhotosAdap
 
         @Override
         public void onBind(Photo photo, int position) {
-            Setting.imageEngine.loadPhoto(ivPhoto.getContext(), photo.getAvailablePath(), ivPhoto);
+            Setting.imageEngine.loadPhoto(ivPhoto.getContext(), photo.getAvailableUri(), ivPhoto);
 
             ivPhoto.setVisibility(View.VISIBLE);
             ivPlay.setVisibility(View.VISIBLE);

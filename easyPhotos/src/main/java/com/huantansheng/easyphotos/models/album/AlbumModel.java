@@ -28,7 +28,7 @@ import java.util.Locale;
  */
 public class AlbumModel {
     private static final String TAG = "AlbumModel";
-    public static AlbumModel instance;
+    public static volatile AlbumModel instance;
     public Album album;
     private boolean isQuery = false;
 
@@ -153,9 +153,7 @@ public class AlbumModel {
         final Cursor cursor = contentResolver.query(CONTENT_URI, PROJECTIONS, selection, selectionArgs, SORT_ORDER);
         int index = 0;
 
-        if (cursor == null) {
-            // Log.d(TAG, "call: " + "Empty photos");
-        } else {
+        if (cursor != null) {
             if (cursor.moveToFirst()) {
                 final String albumItem_all_name = getAllAlbumName(context);
                 final String albumItem_video_name = context.getString(R.string.selector_folder_video_easy_photos);
@@ -234,6 +232,8 @@ public class AlbumModel {
             }
             callBack.onAlbumWorkedCallBack();
             cursor.close();
+        } else {
+            // Log.d(TAG, "call: " + "Empty photos");
         }
     }
 

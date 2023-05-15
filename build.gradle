@@ -7,7 +7,7 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.4.30" //新添加的这一classpath
     }
 }

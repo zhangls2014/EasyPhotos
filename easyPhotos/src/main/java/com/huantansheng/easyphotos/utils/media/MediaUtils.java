@@ -23,6 +23,7 @@ import com.huantansheng.easyphotos.utils.uri.UriUtils;
 import com.huantansheng.easyphotos.utils.system.SystemUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 public class MediaUtils {
 
@@ -42,7 +43,11 @@ public class MediaUtils {
             Log.e("DurationUtils", e.toString());
         } finally {
             if (mmr != null) {
-                mmr.release();
+                try {
+                    mmr.release();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return 0;

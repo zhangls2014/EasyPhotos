@@ -16,6 +16,7 @@ import com.huantansheng.easyphotos.result.Result;
 import com.huantansheng.easyphotos.setting.Setting;
 import com.huantansheng.easyphotos.ui.widget.PressedImageView;
 import com.huantansheng.easyphotos.utils.media.MediaUtils;
+import com.huantansheng.easyphotos.utils.uri.UriUtils;
 
 /**
  * 预览所有选中图片集合的适配器
@@ -47,16 +48,17 @@ public class PreviewPhotosFragmentAdapter extends RecyclerView.Adapter<PreviewPh
         final long duration = photo.duration;
 
         final boolean isGif = path.endsWith(Type.GIF) || type.endsWith(Type.GIF);
+        Uri uri = UriUtils.getUriByPath(path);
         if (Setting.showGif && isGif) {
-            Setting.imageEngine.loadGifAsBitmap(holder.ivPhoto.getContext(), path, holder.ivPhoto);
+            Setting.imageEngine.loadGifAsBitmap(holder.ivPhoto.getContext(), uri, holder.ivPhoto);
             holder.tvType.setText(R.string.gif_easy_photos);
             holder.tvType.setVisibility(View.VISIBLE);
         } else if (Setting.showVideo() && type.contains(Type.VIDEO)) {
-            Setting.imageEngine.loadPhoto(holder.ivPhoto.getContext(), path, holder.ivPhoto);
+            Setting.imageEngine.loadPhoto(holder.ivPhoto.getContext(), uri, holder.ivPhoto);
             holder.tvType.setText(MediaUtils.format(duration));
             holder.tvType.setVisibility(View.VISIBLE);
         } else {
-            Setting.imageEngine.loadPhoto(holder.ivPhoto.getContext(), path, holder.ivPhoto);
+            Setting.imageEngine.loadPhoto(holder.ivPhoto.getContext(), uri, holder.ivPhoto);
             holder.tvType.setVisibility(View.GONE);
         }
 

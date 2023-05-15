@@ -1,6 +1,7 @@
 package com.huantansheng.easyphotos.ui.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.huantansheng.easyphotos.result.Result;
 import com.huantansheng.easyphotos.setting.Setting;
 import com.huantansheng.easyphotos.ui.widget.PressedImageView;
 import com.huantansheng.easyphotos.utils.media.MediaUtils;
+import com.huantansheng.easyphotos.utils.uri.UriUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -77,16 +79,17 @@ public class PhotosAdapter extends RecyclerView.Adapter {
             final long duration = item.duration;
             final String path = item.getAvailablePath();
             final boolean isGif = path.endsWith(Type.GIF) || item.type.endsWith(Type.GIF);
+            Uri uri = UriUtils.getUriByPath(path);
             if (Setting.showGif && isGif) {
-                Setting.imageEngine.loadGifAsBitmap(((PhotoViewHolder) holder).ivPhoto.getContext(), path, ((PhotoViewHolder) holder).ivPhoto);
+                Setting.imageEngine.loadGifAsBitmap(((PhotoViewHolder) holder).ivPhoto.getContext(), uri, ((PhotoViewHolder) holder).ivPhoto);
                 ((PhotoViewHolder) holder).tvType.setText(R.string.gif_easy_photos);
                 ((PhotoViewHolder) holder).tvType.setVisibility(View.VISIBLE);
             } else if (Setting.showVideo() && item.type.contains(Type.VIDEO)) {
-                Setting.imageEngine.loadPhoto(((PhotoViewHolder) holder).ivPhoto.getContext(), path, ((PhotoViewHolder) holder).ivPhoto);
+                Setting.imageEngine.loadPhoto(((PhotoViewHolder) holder).ivPhoto.getContext(), uri, ((PhotoViewHolder) holder).ivPhoto);
                 ((PhotoViewHolder) holder).tvType.setText(MediaUtils.format(duration));
                 ((PhotoViewHolder) holder).tvType.setVisibility(View.VISIBLE);
             } else {
-                Setting.imageEngine.loadPhoto(((PhotoViewHolder) holder).ivPhoto.getContext(), path, ((PhotoViewHolder) holder).ivPhoto);
+                Setting.imageEngine.loadPhoto(((PhotoViewHolder) holder).ivPhoto.getContext(), uri, ((PhotoViewHolder) holder).ivPhoto);
                 ((PhotoViewHolder) holder).tvType.setVisibility(View.GONE);
             }
 
@@ -168,21 +171,22 @@ public class PhotosAdapter extends RecyclerView.Adapter {
                 return;
             }
 
-            WeakReference weakReference = (WeakReference) dataList.get(p);
-
-            if (null != weakReference) {
-                View adView = (View) weakReference.get();
-                if (null != adView) {
-                    if (null != adView.getParent()) {
-                        if (adView.getParent() instanceof FrameLayout) {
-                            ((FrameLayout) adView.getParent()).removeAllViews();
-                        }
-                    }
-                    ((AdViewHolder) holder).adFrame.setVisibility(View.VISIBLE);
-                    ((AdViewHolder) holder).adFrame.removeAllViews();
-                    ((AdViewHolder) holder).adFrame.addView(adView);
-                }
-            }
+            // TODO 原代码有问题，dataList 是 Photo 列表，不是 View
+//            WeakReference weakReference = (WeakReference) dataList.get(p);
+//
+//            if (null != weakReference) {
+//                View adView = (View) weakReference.get();
+//                if (null != adView) {
+//                    if (null != adView.getParent()) {
+//                        if (adView.getParent() instanceof FrameLayout) {
+//                            ((FrameLayout) adView.getParent()).removeAllViews();
+//                        }
+//                    }
+//                    ((AdViewHolder) holder).adFrame.setVisibility(View.VISIBLE);
+//                    ((AdViewHolder) holder).adFrame.removeAllViews();
+//                    ((AdViewHolder) holder).adFrame.addView(adView);
+//                }
+//            }
         }
 
         if (holder instanceof CameraViewHolder) {

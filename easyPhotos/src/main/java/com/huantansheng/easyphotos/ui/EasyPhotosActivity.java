@@ -208,15 +208,25 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
     }
 
     protected String[] getNeedPermissions() {
+        ArrayList<String> permissions = new ArrayList<>();
         if (Setting.isShowCamera) {
-            if (Setting.captureType.equals(Capture.IMAGE)) {
-                return new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-            } else {
-                return new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+            permissions.add(Manifest.permission.CAMERA);
+            if (!Setting.captureType.equals(Capture.IMAGE)) {
+                permissions.add(Manifest.permission.RECORD_AUDIO);
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!Setting.captureType.equals(Capture.VIDEO)) {
+                permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
+            }
+            if (!Setting.captureType.equals(Capture.IMAGE)) {
+                permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
             }
         } else {
-            return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
+        return permissions.toArray(new String[0]);
     }
 
 
