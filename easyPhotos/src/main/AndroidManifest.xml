@@ -13,8 +13,7 @@
         android:maxSdkVersion="32" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32"
-        tools:ignore="ScopedStorage" />
+        android:maxSdkVersion="32" />
     <!-- Android 13 细化媒体权限 -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
@@ -25,9 +24,7 @@
         android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
 
-    <application
-        android:allowBackup="true"
-        android:supportsRtl="true">
+    <application>
         <provider
             android:name="com.huantansheng.easyphotos.utils.provider.EasyPhotosFileProvider"
             android:authorities="${applicationId}.provider"

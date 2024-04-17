@@ -12,14 +12,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.chrisbanes.photoview.PhotoView;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.huantansheng.easyphotos.R;
 import com.huantansheng.easyphotos.constant.Type;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
@@ -209,7 +209,7 @@ public class PreviewPhotosAdapter extends RecyclerView.Adapter<PreviewPhotosAdap
     }
 
     public static class PreviewVideosViewHolder extends PreviewViewHolder {
-        private StyledPlayerView playerView;
+        private PlayerView playerView;
         private final ProgressBar progressBar;
         private final ImageView ivPlay;
 
@@ -217,10 +217,11 @@ public class PreviewPhotosAdapter extends RecyclerView.Adapter<PreviewPhotosAdap
 
             @Override
             public void onIsPlayingChanged(boolean isPlaying) {
-                if (isPlaying)
+                if (isPlaying) {
                     playingUI();
-                else
+                } else {
                     resetUI();
+                }
             }
 
             @Override
