@@ -1,12 +1,17 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="EasyPhotosFullscreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
+    <style name="EasyPhotosTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="easyMetaButtonBarStyle">?android:attr/buttonBarStyle</item>
         <item name="easyMetaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/easy_photos_status_bar</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/easy_photos_status_bar</item>
+        <item name="android:navigationBarDividerColor" tools:targetApi="o_mr1">@color/easy_photos_status_bar</item>
     </style>
 
-    <style name="EasyPhotosTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
+    <style name="EasyPhotosFullscreenTheme" parent="EasyPhotosTheme">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowTranslucentStatus">false</item>
+    </style>
 
 </resources>
