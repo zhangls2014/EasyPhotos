@@ -78,7 +78,7 @@ dependencies {
  // support
  // implementation 'com.joker.HuanTanSheng:EasyPhotos:2.5.1'
  // androidX：
- implementation 'io.github.joker-fu:EasyPhotos:2.6.0'
+ implementation 'io.github.joker-fu:EasyPhotos:2.6.2'
 }
 ```    
     

@@ -43,7 +43,7 @@ afterEvaluate {
 
                 groupId = 'com.zhangls'
                 artifactId = 'EasyPhotos'
-                version = '2.6.0'
+                version = '2.6.2'
             }
         }
     }

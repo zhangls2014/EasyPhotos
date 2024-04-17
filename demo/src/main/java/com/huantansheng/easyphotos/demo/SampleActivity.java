@@ -116,6 +116,11 @@ public class SampleActivity extends AppCompatActivity
 
     private final SelectCallback callback = new SelectCallback() {
         @Override
+        public void onCancel() {
+            Toast.makeText(SampleActivity.this, "取消了", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         public void onResult(ArrayList<Photo> photos, ArrayList<String> paths, boolean isOriginal) {
             selectedPhotoList.clear();
             selectedPhotoList.addAll(photos);
@@ -297,6 +302,11 @@ public class SampleActivity extends AppCompatActivity
                         .setCount(9)
                         .setPuzzleMenu(false)
                         .start(new SelectCallback() {
+                            @Override
+                            public void onCancel() {
+
+                            }
+
                             @Override
                             public void onResult(ArrayList<Photo> photos, ArrayList<String> paths, boolean isOriginal) {
                                 EasyPhotos.startPuzzleWithPhotos(SampleActivity.this, photos, false, GlideEngine.getInstance(), new PuzzleCallback() {

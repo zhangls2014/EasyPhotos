@@ -31,7 +31,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.R;
 import com.huantansheng.easyphotos.callback.SelectCallback;
-import com.huantansheng.easyphotos.constant.Capture;
 import com.huantansheng.easyphotos.constant.Code;
 import com.huantansheng.easyphotos.constant.Key;
 import com.huantansheng.easyphotos.engine.ImageEngine;
@@ -373,6 +372,11 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
                 EasyPhotos.createAlbum(this, true, Setting.imageEngine)
                         .setCount(1)
                         .start(new SelectCallback() {
+                            @Override
+                            public void onCancel() {
+
+                            }
+
                             @Override
                             public void onResult(ArrayList<Photo> photos, ArrayList<String> paths, boolean isOriginal) {
                                 dealResult(photos, paths);

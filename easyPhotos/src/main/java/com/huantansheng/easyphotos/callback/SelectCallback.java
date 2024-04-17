@@ -12,6 +12,11 @@ import java.util.ArrayList;
  */
 public abstract class SelectCallback {
     /**
+     * 取消选择
+     */
+    public abstract  void onCancel();
+
+    /**
      * 选择结果回调
      *
      * @param photos     返回对象集合：如果你需要了解图片的宽、高、大小、用户是否选中原图选项等信息，可以用这个
