@@ -59,8 +59,8 @@
 - 外部可调用EasyPhotos进行图片预览
 - 支持外部扩展视频播放（由外部实现视频播放逻辑）
 - 支持外部扩展图片/视频压缩操作（由外部实现压缩逻辑）
-- 支持Support和AndroidX
-- 兼容API19 ～ API32
+- 支持 AndroidX
+- 兼容API19 ～ API34
 
 ## 获取EasyPhotos（通过Gradle方式）
 1. 在项目的 build.gradle（project） 文件里面添加:
@@ -78,7 +78,7 @@ dependencies {
  // support
  // implementation 'com.joker.HuanTanSheng:EasyPhotos:2.5.1'
  // androidX：
- implementation 'io.github.joker-fu:EasyPhotos:andX-2.5.7'
+ implementation 'io.github.joker-fu:EasyPhotos:2.6.0'
 }
 ```    
     

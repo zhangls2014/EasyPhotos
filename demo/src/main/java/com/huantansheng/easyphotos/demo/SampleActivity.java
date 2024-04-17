@@ -1,11 +1,9 @@
 package com.huantansheng.easyphotos.demo;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -116,23 +114,7 @@ public class SampleActivity extends AppCompatActivity
         super.onBackPressed();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.sample, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SampleFragments.class);
-            startActivity(intent);
-        }
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
-    }
-
-    private SelectCallback callback = new SelectCallback() {
+    private final SelectCallback callback = new SelectCallback() {
         @Override
         public void onResult(ArrayList<Photo> photos, ArrayList<String> paths, boolean isOriginal) {
             selectedPhotoList.clear();
@@ -382,14 +364,11 @@ public class SampleActivity extends AppCompatActivity
         albumItemsAdView = (RelativeLayout) getLayoutInflater().inflate(R.layout.ad_album_items, null, false);//不可以有父布局，所以inflate第二个参数必须为null，并且布局文件必须独立
 
         //模拟5秒后网络回调
-        rvImage.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ((ImageView) albumItemsAdView.findViewById(R.id.iv_image)).setImageResource(R.mipmap.ad);
-                ((TextView) albumItemsAdView.findViewById(R.id.tv_title)).setText("albumItemsAd广告");
-                photosAdLoaded = true;//正常情况可能不知道是先启动EasyPhotos还是数据先回来，所以这里加个标识，如果是后启动EasyPhotos，那么EasyPhotos会直接加载广告
-                EasyPhotos.notifyAlbumItemsAdLoaded();
-            }
+        rvImage.postDelayed(() -> {
+            ((ImageView) albumItemsAdView.findViewById(R.id.iv_image)).setImageResource(R.mipmap.ad);
+            ((TextView) albumItemsAdView.findViewById(R.id.tv_title)).setText("albumItemsAd广告");
+            photosAdLoaded = true;//正常情况可能不知道是先启动EasyPhotos还是数据先回来，所以这里加个标识，如果是后启动EasyPhotos，那么EasyPhotos会直接加载广告
+            EasyPhotos.notifyAlbumItemsAdLoaded();
         }, 5000);
     }
 
