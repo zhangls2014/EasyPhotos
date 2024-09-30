@@ -39,19 +39,16 @@
             android:name=".ui.EasyPhotosActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:theme="@style/EasyPhotosTheme" />
         <activity
             android:name=".ui.PreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:theme="@style/EasyPhotosFullscreenTheme" />
         <activity
             android:name=".ui.PuzzleActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:theme="@style/EasyPhotosTheme"
             android:windowSoftInputMode="adjustPan" />
 
@@ -59,7 +56,6 @@
             android:name=".ui.PuzzleSelectorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:theme="@style/EasyPhotosTheme" />
         <activity
             android:name=".ui.EasyCameraActivity"
@@ -81,7 +77,6 @@
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
