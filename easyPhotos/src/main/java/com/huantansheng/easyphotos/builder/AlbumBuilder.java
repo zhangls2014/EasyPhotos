@@ -22,8 +22,8 @@ import com.huantansheng.easyphotos.utils.Future;
 import com.huantansheng.easyphotos.utils.result.EasyResult;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * EasyPhotos的启动管理器
@@ -241,13 +241,25 @@ public class AlbumBuilder {
      * @param selectedPhotos 默认选择图片集合
      * @return AlbumBuilder
      */
-    public AlbumBuilder setSelectedPhotos(ArrayList<Photo> selectedPhotos) {
+    public AlbumBuilder setSelectedPhotos(List<Photo> selectedPhotos) {
         Setting.selectedPhotos.clear();
         if (selectedPhotos.isEmpty()) {
             return AlbumBuilder.this;
         }
         Setting.selectedPhotos.addAll(selectedPhotos);
         Setting.selectedOriginal = selectedPhotos.get(0).selectedOriginal;
+        return AlbumBuilder.this;
+    }
+
+    /**
+     * 进入相册后立即进入预览界面。仅 {@link #setSelectedPhotos} 设置后有效
+     *
+     * @param currentIndex 开始预览的位置
+     * @return AlbumBuilder
+     */
+    public AlbumBuilder setStartWithPreview(int currentIndex) {
+        Setting.startWithPreview = true;
+        Setting.startPreviewIndex = currentIndex;
         return AlbumBuilder.this;
     }
 

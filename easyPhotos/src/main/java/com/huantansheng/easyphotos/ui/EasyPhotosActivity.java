@@ -204,6 +204,10 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
                 selectedPhoto.selectedOriginal = Setting.selectedOriginal;
                 Result.addPhoto(selectedPhoto);
             }
+
+            if (Setting.startWithPreview) {
+                PreviewActivity.start(EasyPhotosActivity.this, -1, Setting.startPreviewIndex);
+            }
         }
     }
 

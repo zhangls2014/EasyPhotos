@@ -78,6 +78,12 @@ public class Setting {
     public static boolean isHideUCropControls = false;
     public static float[] aspectRatio = new float[]{1, 1};
 
+    // 预览配置
+    // 进入相册后直接进入预览页面
+    public static boolean startWithPreview = false;
+    // 预览页面的初始索引
+    public static int startPreviewIndex = 0;
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(value = {LIST_FIRST, BOTTOM_RIGHT})
     public @interface Location {
@@ -132,6 +138,9 @@ public class Setting {
         isFreeStyleCrop = false;
         isHideUCropControls = false;
         aspectRatio = new float[]{1, 1};
+
+        startWithPreview = false;
+        startPreviewIndex = 0;
     }
 
     public static boolean isOnlyGif() {
