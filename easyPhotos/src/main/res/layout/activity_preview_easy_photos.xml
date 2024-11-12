@@ -90,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/easy_photos_bar_primary_translation"
+            android:background="@color/easy_photos_status_bar"
             android:clickable="true"
             android:fitsSystemWindows="true"
             android:focusable="true">
