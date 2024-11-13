@@ -205,8 +205,9 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
                 Result.addPhoto(selectedPhoto);
             }
 
-            if (Setting.startWithPreview) {
-                PreviewActivity.start(EasyPhotosActivity.this, -1, Setting.startPreviewIndex);
+            int index = Setting.startPreviewIndex;
+            if (Setting.startWithPreview && index >= 0 && index < Setting.selectedPhotos.size()) {
+                PreviewActivity.start(EasyPhotosActivity.this, -1, index);
             }
         }
     }
