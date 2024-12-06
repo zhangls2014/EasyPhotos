@@ -60,7 +60,6 @@ import com.huantansheng.easyphotos.ui.adapter.AlbumItemsAdapter;
 import com.huantansheng.easyphotos.ui.adapter.PhotosAdapter;
 import com.huantansheng.easyphotos.ui.widget.PressedTextView;
 import com.huantansheng.easyphotos.utils.color.ColorUtils;
-import com.huantansheng.easyphotos.utils.media.MediaScannerConnectionUtils;
 import com.huantansheng.easyphotos.utils.media.MediaUtils;
 import com.huantansheng.easyphotos.utils.permission.PermissionUtil;
 import com.huantansheng.easyphotos.utils.settings.SettingsUtils;
@@ -306,13 +305,9 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
             case RESULT_OK:
                 if (data == null) return;
                 if (Code.REQUEST_CAMERA == requestCode) {
-                    Uri uri;
-                    Uri videoUri = data.getParcelableExtra(Key.EXTRA_RESULT_CAPTURE_VIDEO_PATH);
-                    Uri imageUri = data.getParcelableExtra(Key.EXTRA_RESULT_CAPTURE_IMAGE_PATH);
-                    if (videoUri != null) {
-                        uri = videoUri;
-                    } else {
-                        uri = imageUri;
+                    Uri uri = data.getParcelableExtra(Key.EXTRA_RESULT_CAPTURE_VIDEO_PATH);
+                    if (uri == null) {
+                        uri = data.getParcelableExtra(Key.EXTRA_RESULT_CAPTURE_IMAGE_PATH);
                     }
                     String path = UriUtils.getPathByUri(uri);
                     File tempFile = null;
@@ -456,7 +451,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
     }
 
     private void addNewPhoto(String albumName, Photo photo) {
-        MediaScannerConnectionUtils.refresh(this, photo.filePath);
+        EasyPhotos.notifyMedia(this, photo.filePath);
         photo.selectedOriginal = Setting.selectedOriginal;
 
         String albumItem_all_name = albumModel.getAllAlbumName(this);
@@ -501,7 +496,6 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
     }
 
     private void onCameraResult(File file) {
-
         final Pair<String, Photo> pair = MediaUtils.getPhoto(file);
         if (pair == null || pair.second == null) {
             throw new RuntimeException("EasyPhotos拍照保存的图片不存在");
@@ -510,7 +504,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
         String bucketName = pair.first;
         Photo photo = pair.second;
         if (Setting.onlyStartCamera || albumModel.getAlbumItems().isEmpty()) {
-            MediaScannerConnectionUtils.refresh(this, file);// 更新媒体库
+            EasyPhotos.notifyMedia(this, file);// 更新媒体库
 
             photo.selectedOriginal = Setting.selectedOriginal;
             Result.addPhoto(photo);

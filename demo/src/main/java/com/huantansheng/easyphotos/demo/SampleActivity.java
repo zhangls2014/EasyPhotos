@@ -33,6 +33,7 @@ import com.huantansheng.easyphotos.utils.system.SystemUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SampleActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -121,7 +122,7 @@ public class SampleActivity extends AppCompatActivity
         }
 
         @Override
-        public void onResult(ArrayList<Photo> photos, ArrayList<String> paths, boolean isOriginal) {
+        public void onResult(List<Photo> photos, List<String> paths, boolean isOriginal) {
             selectedPhotoList.clear();
             selectedPhotoList.addAll(photos);
             selectedPhotoPathList.clear();
@@ -139,6 +140,7 @@ public class SampleActivity extends AppCompatActivity
         switch (id) {
             case R.id.camera://单独使用相机
                 EasyPhotos.createCamera(this)
+                        .enableSystemCamera(false)
                         .start(callback);
                 break;
             case R.id.camera_cover://单独使用相机带覆盖层
@@ -308,7 +310,7 @@ public class SampleActivity extends AppCompatActivity
                             }
 
                             @Override
-                            public void onResult(ArrayList<Photo> photos, ArrayList<String> paths, boolean isOriginal) {
+                            public void onResult(List<Photo> photos, List<String> paths, boolean isOriginal) {
                                 EasyPhotos.startPuzzleWithPhotos(SampleActivity.this, photos, false, GlideEngine.getInstance(), new PuzzleCallback() {
                                     @Override
                                     public void onResult(Photo photo, String path) {

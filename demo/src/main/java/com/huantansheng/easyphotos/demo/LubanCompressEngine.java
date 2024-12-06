@@ -1,8 +1,6 @@
 package com.huantansheng.easyphotos.demo;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import com.huantansheng.easyphotos.callback.CompressCallback;
@@ -16,11 +14,10 @@ import java.util.List;
 
 import top.zibin.luban.CompressionPredicate;
 import top.zibin.luban.Luban;
-import top.zibin.luban.OnCompressListener;
 
 public class LubanCompressEngine implements CompressEngine {
     //单例
-    private static LubanCompressEngine instance = null;
+    private volatile static LubanCompressEngine instance = null;
 
     //单例模式，私有构造方法
     private LubanCompressEngine() {
@@ -39,17 +36,8 @@ public class LubanCompressEngine implements CompressEngine {
     }
 
     private String getPath(Context context) {
-        String path;
-        //Android 10 存在在应用内
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            path = Environment.getExternalStorageDirectory() + "/Luban/image/";
-        } else {
-            path = context.getFilesDir() + "/Luban/image/";
-        }
-        File file = new File(path);
-        if (file.mkdirs()) {
-            return path;
-        }
+        String path = context.getFilesDir() + "/Luban/image/";
+        new File(path).mkdirs();
         return path;
     }
 

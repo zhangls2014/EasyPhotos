@@ -17,7 +17,7 @@ import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.huantansheng.easyphotos.ui.EasyPhotosActivity;
 import com.huantansheng.easyphotos.ui.PuzzleActivity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * HolderFragment
@@ -43,12 +43,12 @@ public final class HolderFragment extends Fragment {
         EasyPhotosActivity.start(this, HOLDER_SELECT_REQUEST_CODE);
     }
 
-    public void startPuzzleWithPhotos(ArrayList<Photo> photos, boolean replaceCustom, @NonNull ImageEngine imageEngine, PuzzleCallback callback) {
+    public void startPuzzleWithPhotos(List<Photo> photos, boolean replaceCustom, @NonNull ImageEngine imageEngine, PuzzleCallback callback) {
         mPuzzleCallback = callback;
         PuzzleActivity.startWithPhotos(this, photos, HOLDER_PUZZLE_REQUEST_CODE, replaceCustom, imageEngine);
     }
 
-    public void startPuzzleWithPaths(ArrayList<String> paths, boolean replaceCustom, @NonNull ImageEngine imageEngine, PuzzleCallback callback) {
+    public void startPuzzleWithPaths(List<String> paths, boolean replaceCustom, @NonNull ImageEngine imageEngine, PuzzleCallback callback) {
         mPuzzleCallback = callback;
         PuzzleActivity.startWithPaths(this, paths, HOLDER_PUZZLE_REQUEST_CODE, replaceCustom, imageEngine);
     }
@@ -60,8 +60,8 @@ public final class HolderFragment extends Fragment {
             switch (requestCode) {
                 case HOLDER_SELECT_REQUEST_CODE:
                     if (mSelectCallback != null) {
-                        ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
-                        ArrayList<String> resultPaths = data.getStringArrayListExtra(EasyPhotos.RESULT_PATHS);
+                        List<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
+                        List<String> resultPaths = data.getStringArrayListExtra(EasyPhotos.RESULT_PATHS);
                         boolean selectedOriginal = data.getBooleanExtra(EasyPhotos.RESULT_SELECTED_ORIGINAL, false);
                         mSelectCallback.onResult(resultPhotos, resultPaths, selectedOriginal);
                     }

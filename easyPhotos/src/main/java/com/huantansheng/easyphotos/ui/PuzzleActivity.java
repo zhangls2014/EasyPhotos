@@ -57,6 +57,7 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -69,7 +70,7 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
     private static WeakReference<Class<? extends Activity>> toClass;
 
 
-    public static void startWithPhotos(Activity act, ArrayList<Photo> photos, int requestCode, boolean replaceCustom, @NonNull ImageEngine imageEngine) {
+    public static void startWithPhotos(Activity act, List<Photo> photos, int requestCode, boolean replaceCustom, @NonNull ImageEngine imageEngine) {
         if (null != toClass) {
             toClass.clear();
             toClass = null;
@@ -79,14 +80,14 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
         }
         Intent intent = new Intent(act, PuzzleActivity.class);
         intent.putExtra(Key.PUZZLE_FILE_IS_PHOTO, true);
-        intent.putParcelableArrayListExtra(Key.PUZZLE_FILES, photos);
+        intent.putParcelableArrayListExtra(Key.PUZZLE_FILES, new ArrayList<>(photos));
         if (replaceCustom) {
-            toClass = new WeakReference<Class<? extends Activity>>(act.getClass());
+            toClass = new WeakReference<>(act.getClass());
         }
         act.startActivityForResult(intent, requestCode);
     }
 
-    public static void startWithPhotos(Fragment fragment, ArrayList<Photo> photos, int requestCode, boolean replaceCustom, @NonNull ImageEngine imageEngine) {
+    public static void startWithPhotos(Fragment fragment, List<Photo> photos, int requestCode, boolean replaceCustom, @NonNull ImageEngine imageEngine) {
         if (null != toClass) {
             toClass.clear();
             toClass = null;
@@ -96,17 +97,17 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
         }
         Intent intent = new Intent(fragment.getActivity(), PuzzleActivity.class);
         intent.putExtra(Key.PUZZLE_FILE_IS_PHOTO, true);
-        intent.putParcelableArrayListExtra(Key.PUZZLE_FILES, photos);
+        intent.putParcelableArrayListExtra(Key.PUZZLE_FILES, new ArrayList<>(photos));
         if (replaceCustom) {
             if (fragment.getActivity() != null) {
-                toClass = new WeakReference<Class<? extends Activity>>(fragment.getActivity().getClass());
+                toClass = new WeakReference<>(fragment.getActivity().getClass());
             }
         }
         fragment.startActivityForResult(intent, requestCode);
     }
 
 
-    public static void startWithPaths(Activity act, ArrayList<String> paths, int requestCode, boolean replaceCustom, @NonNull ImageEngine imageEngine) {
+    public static void startWithPaths(Activity act, List<String> paths, int requestCode, boolean replaceCustom, @NonNull ImageEngine imageEngine) {
         if (null != toClass) {
             toClass.clear();
             toClass = null;
@@ -116,14 +117,14 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
         }
         Intent intent = new Intent(act, PuzzleActivity.class);
         intent.putExtra(Key.PUZZLE_FILE_IS_PHOTO, false);
-        intent.putStringArrayListExtra(Key.PUZZLE_FILES, paths);
+        intent.putStringArrayListExtra(Key.PUZZLE_FILES, new ArrayList<>(paths));
         if (replaceCustom) {
-            toClass = new WeakReference<Class<? extends Activity>>(act.getClass());
+            toClass = new WeakReference<>(act.getClass());
         }
         act.startActivityForResult(intent, requestCode);
     }
 
-    public static void startWithPaths(Fragment fragment, ArrayList<String> paths, int requestCode, boolean replaceCustom, @NonNull ImageEngine imageEngine) {
+    public static void startWithPaths(Fragment fragment, List<String> paths, int requestCode, boolean replaceCustom, @NonNull ImageEngine imageEngine) {
         if (null != toClass) {
             toClass.clear();
             toClass = null;
@@ -133,10 +134,10 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
         }
         Intent intent = new Intent(fragment.getActivity(), PuzzleActivity.class);
         intent.putExtra(Key.PUZZLE_FILE_IS_PHOTO, false);
-        intent.putStringArrayListExtra(Key.PUZZLE_FILES, paths);
+        intent.putStringArrayListExtra(Key.PUZZLE_FILES, new ArrayList<>(paths));
         if (replaceCustom) {
             if (null != fragment.getActivity())
-                toClass = new WeakReference<Class<? extends Activity>>(fragment.getActivity().getClass());
+                toClass = new WeakReference<>(fragment.getActivity().getClass());
         }
         fragment.startActivityForResult(intent, requestCode);
     }
@@ -154,9 +155,9 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
 
     private LinearLayout llMenu;
     private DegreeSeekBar degreeSeekBar;
-    private ArrayList<ImageView> ivMenus = new ArrayList<>();
+    private final ArrayList<ImageView> ivMenus = new ArrayList<>();
 
-    private ArrayList<Integer> degrees = new ArrayList<>();
+    private final ArrayList<Integer> degrees = new ArrayList<>();
     private int degreeIndex = -1;
     private int controlFlag;
     private static final int FLAG_CONTROL_PADDING = 0;
@@ -378,7 +379,7 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
                             }
 
                             @Override
-                            public void onResult(ArrayList<Photo> photos, ArrayList<String> paths, boolean isOriginal) {
+                            public void onResult(List<Photo> photos, List<String> paths, boolean isOriginal) {
                                 dealResult(photos, paths);
                             }
                         });
@@ -546,8 +547,8 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
         }
         switch (resultCode) {
             case RESULT_OK:
-                ArrayList<Photo> photos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
-                ArrayList<String> paths = data.getStringArrayListExtra(EasyPhotos.RESULT_PATHS);
+                List<Photo> photos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
+                List<String> paths = data.getStringArrayListExtra(EasyPhotos.RESULT_PATHS);
                 dealResult(photos, paths);
                 break;
             case RESULT_CANCELED:
@@ -556,7 +557,7 @@ public class PuzzleActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void dealResult(ArrayList<Photo> photos, ArrayList<String> paths) {
+    private void dealResult(List<Photo> photos, List<String> paths) {
         degrees.remove(degreeIndex);
         degrees.add(degreeIndex, 0);
 

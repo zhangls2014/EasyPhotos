@@ -208,7 +208,7 @@ public final class EasyPhotos {
      * @param imageEngine   图片加载引擎的具体实现
      * @param callback      拼图回调
      */
-    public static void startPuzzleWithPhotos(FragmentActivity act, ArrayList<Photo> photos, boolean replaceCustom, @NonNull ImageEngine imageEngine, PuzzleCallback callback) {
+    public static void startPuzzleWithPhotos(FragmentActivity act, List<Photo> photos, boolean replaceCustom, @NonNull ImageEngine imageEngine, PuzzleCallback callback) {
         act.setResult(Activity.RESULT_OK);
         EasyResult.get(act).startPuzzleWithPhotos(photos, replaceCustom, imageEngine, callback);
     }
@@ -225,7 +225,7 @@ public final class EasyPhotos {
      * @param imageEngine   图片加载引擎的具体实现
      * @param callback      拼图回调
      */
-    public static void startPuzzleWithPaths(FragmentActivity act, ArrayList<String> paths, boolean replaceCustom, @NonNull ImageEngine imageEngine, PuzzleCallback callback) {
+    public static void startPuzzleWithPaths(FragmentActivity act, List<String> paths, boolean replaceCustom, @NonNull ImageEngine imageEngine, PuzzleCallback callback) {
         act.setResult(Activity.RESULT_OK);
         EasyResult.get(act).startPuzzleWithPaths(paths, replaceCustom, imageEngine, callback);
     }
@@ -238,7 +238,7 @@ public final class EasyPhotos {
      * @param photos        图片Photo集合
      * @param bottomPreview 是否显示底部预览效果
      */
-    public static void startPreviewPhotos(FragmentActivity act, @NonNull ImageEngine imageEngine, @NonNull ArrayList<Photo> photos, boolean bottomPreview) {
+    public static void startPreviewPhotos(FragmentActivity act, @NonNull ImageEngine imageEngine, @NonNull List<Photo> photos, boolean bottomPreview) {
         EasyPhotos.startPreviewPhotos(act, imageEngine, photos, bottomPreview, 0);
     }
 
@@ -250,7 +250,7 @@ public final class EasyPhotos {
      * @param paths         图片路径集合
      * @param bottomPreview 是否显示底部预览效果
      */
-    public static void startPreviewPaths(FragmentActivity act, @NonNull ImageEngine imageEngine, @NonNull ArrayList<String> paths, boolean bottomPreview) {
+    public static void startPreviewPaths(FragmentActivity act, @NonNull ImageEngine imageEngine, @NonNull List<String> paths, boolean bottomPreview) {
         ArrayList<Photo> photos = new ArrayList<>();
         for (String path : paths) {
             Photo photo = new Photo(null, path, null, 0, 0, 0, 0, 0, "");
@@ -269,7 +269,7 @@ public final class EasyPhotos {
      * @param bottomPreview 是否显示底部预览效果
      * @param currIndex     预览图片从第几张开始
      */
-    public static void startPreviewPaths(FragmentActivity act, @NonNull ImageEngine imageEngine, @NonNull ArrayList<String> paths, boolean bottomPreview, int currIndex) {
+    public static void startPreviewPaths(FragmentActivity act, @NonNull ImageEngine imageEngine, @NonNull List<String> paths, boolean bottomPreview, int currIndex) {
         ArrayList<Photo> photos = new ArrayList<>();
         for (String path : paths) {
             Photo photo = new Photo(null, path, null, 0, 0, 0, 0, 0, "");
@@ -287,7 +287,7 @@ public final class EasyPhotos {
      * @param bottomPreview 是否显示底部预览效果
      * @param currIndex     预览图片从第几张开始
      */
-    public static void startPreviewPhotos(FragmentActivity act, @NonNull ImageEngine imageEngine, @NonNull ArrayList<Photo> photos, boolean bottomPreview, int currIndex) {
+    public static void startPreviewPhotos(FragmentActivity act, @NonNull ImageEngine imageEngine, @NonNull List<Photo> photos, boolean bottomPreview, int currIndex) {
         Setting.imageEngine = imageEngine;
         PreviewActivity.start(act, photos, bottomPreview, currIndex);
     }

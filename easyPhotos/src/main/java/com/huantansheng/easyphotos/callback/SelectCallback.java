@@ -2,7 +2,7 @@ package com.huantansheng.easyphotos.callback;
 
 import com.huantansheng.easyphotos.models.album.entity.Photo;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SelectCallback
@@ -23,5 +23,5 @@ public abstract class SelectCallback {
      * @param paths      返回图片最终地址集合：如果你只需要获取图片的最终地址，可以用这个（最终地址：对应图片没裁剪就是原图地址，进行了裁剪就是裁剪后地址）
      * @param isOriginal 返回图片地址集合时如果你需要知道用户选择图片时是否选择了原图选项，用如下方法获取
      */
-    public abstract void onResult(ArrayList<Photo> photos, ArrayList<String> paths, boolean isOriginal);
+    public abstract void onResult(List<Photo> photos, List<String> paths, boolean isOriginal);
 }

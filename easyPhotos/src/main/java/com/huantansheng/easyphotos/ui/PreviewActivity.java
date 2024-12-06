@@ -40,6 +40,7 @@ import com.huantansheng.easyphotos.utils.color.ColorUtils;
 import com.huantansheng.easyphotos.utils.system.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 预览页
@@ -53,17 +54,17 @@ public class PreviewActivity extends AppCompatActivity implements PreviewPhotosA
         act.startActivityForResult(intent, Code.REQUEST_PREVIEW_ACTIVITY);
     }
 
-    public static void start(Activity act, @NonNull ArrayList<Photo> photos, boolean bottomPreview) {
+    public static void start(Activity act, @NonNull List<Photo> photos, boolean bottomPreview) {
         PreviewActivity.start(act, photos, bottomPreview, 0);
     }
 
-    public static void start(Activity act, @NonNull ArrayList<Photo> photos, boolean bottomPreview, int currIndex) {
+    public static void start(Activity act, @NonNull List<Photo> photos, boolean bottomPreview, int currIndex) {
         int size = photos.size();
         if (size < 1) return;
         if (currIndex < 0) currIndex = 0;
         if (currIndex > size - 1) currIndex = size - 1;
         Intent intent = new Intent(act, PreviewActivity.class);
-        intent.putExtra(Key.PREVIEW_EXTERNAL_PHOTOS, photos);
+        intent.putExtra(Key.PREVIEW_EXTERNAL_PHOTOS, new ArrayList<>(photos));
         intent.putExtra(Key.PREVIEW_EXTERNAL_PHOTOS_BOTTOM_PREVIEW, bottomPreview);
         intent.putExtra(Key.PREVIEW_PHOTO_INDEX, currIndex);
         act.startActivity(intent);
