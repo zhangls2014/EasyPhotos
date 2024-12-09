@@ -26,8 +26,8 @@
 
     <application>
         <provider
-            android:name="com.huantansheng.easyphotos.utils.provider.EasyPhotosFileProvider"
-            android:authorities="${applicationId}.provider"
+            android:name=".utils.provider.EasyPhotosFileProvider"
+            android:authorities="${applicationId}.photos.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

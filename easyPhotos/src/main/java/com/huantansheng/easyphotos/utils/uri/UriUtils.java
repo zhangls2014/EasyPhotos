@@ -7,17 +7,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import androidx.core.content.FileProvider;
-
 import com.huantansheng.easyphotos.EasyPhotos;
-import com.huantansheng.easyphotos.setting.Setting;
-import com.huantansheng.easyphotos.utils.provider.EasyPhotosFileProvider;
 import com.huantansheng.easyphotos.utils.system.SystemUtils;
 
 import java.io.File;
@@ -29,9 +24,7 @@ public class UriUtils {
     @SuppressLint("NewApi")
     public static String getPathByUri(Uri uri) {
         Context context = EasyPhotos.getApp();
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
                 final String[] split = docId.split(":");

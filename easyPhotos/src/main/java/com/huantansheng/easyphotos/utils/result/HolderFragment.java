@@ -78,7 +78,9 @@ public final class HolderFragment extends Fragment {
                     break;
             }
         } else {
-            mSelectCallback.onCancel();
+            if (mSelectCallback != null) {
+                mSelectCallback.onCancel();
+            }
             Log.e("EasyPhotos", "resultCode is not RESULT_OK: " + resultCode);
         }
     }

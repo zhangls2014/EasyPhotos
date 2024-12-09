@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.huantansheng.cameralibrary.listener.CaptureListener;
 import com.huantansheng.cameralibrary.listener.ClickListener;
 import com.huantansheng.cameralibrary.listener.ErrorListener;
@@ -31,7 +32,6 @@ import com.huantansheng.cameralibrary.listener.JCameraListener;
 import com.huantansheng.cameralibrary.listener.JCameraPreViewListener;
 import com.huantansheng.cameralibrary.listener.TypeListener;
 import com.huantansheng.cameralibrary.state.CameraMachine;
-import com.huantansheng.cameralibrary.util.FileUtil;
 import com.huantansheng.cameralibrary.util.LogUtil;
 import com.huantansheng.cameralibrary.util.ScreenUtils;
 import com.huantansheng.cameralibrary.view.CameraView;
@@ -469,7 +469,7 @@ public class JCameraView extends FrameLayout implements CameraInterface.CameraOp
             case TYPE_VIDEO:
                 stopVideo();    //停止播放
                 //初始化VideoView
-                FileUtil.deleteFile(videoUrl);
+                FileUtils.delete(videoUrl);
                 mVideoView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
                 machine.start(mVideoView.getHolder(), screenProp);
                 if (jCameraPreViewListener != null) {

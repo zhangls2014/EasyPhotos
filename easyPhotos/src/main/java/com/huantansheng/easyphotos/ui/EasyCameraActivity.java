@@ -18,16 +18,17 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.ImageUtils;
 import com.huantansheng.cameralibrary.JCameraView;
-import com.huantansheng.cameralibrary.listener.ClickListener;
 import com.huantansheng.cameralibrary.listener.ErrorListener;
 import com.huantansheng.cameralibrary.listener.JCameraListener;
 import com.huantansheng.cameralibrary.listener.JCameraPreViewListener;
-import com.huantansheng.cameralibrary.util.FileUtil;
 import com.huantansheng.easyphotos.R;
 import com.huantansheng.easyphotos.constant.Capture;
 import com.huantansheng.easyphotos.constant.Code;
@@ -35,7 +36,6 @@ import com.huantansheng.easyphotos.constant.Key;
 import com.huantansheng.easyphotos.setting.Setting;
 import com.huantansheng.easyphotos.utils.Future;
 import com.huantansheng.easyphotos.utils.media.MediaUtils;
-import com.huantansheng.easyphotos.utils.system.SystemUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class EasyCameraActivity extends AppCompatActivity {
     private RelativeLayout rlCoverView;
 
     private String applicationName = "";
-    private Uri imageUri = null;
+    private File mediaFile = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,27 +71,14 @@ public class EasyCameraActivity extends AppCompatActivity {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager()) != null ||
                 getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-            if (SystemUtils.beforeAndroidTen()) {
-                final File tempFile = createCameraTempFile("IMG", ".jpg");
-                if (tempFile != null && tempFile.exists()) {
-                    if (SystemUtils.beforeAndroidN()) {
-                        imageUri = Uri.fromFile(tempFile);
-                    } else {
-                        //通过FileProvider创建一个content类型的Uri
-                        imageUri = FileProvider.getUriForFile(this, Setting.fileProviderAuthority, tempFile);
-                    }
-//                    cameraPath = tempFile.getAbsolutePath();
-                } else {
-                    Toast.makeText(this, R.string.camera_temp_file_error_easy_photos, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            } else {
-                imageUri = MediaUtils.createImageUri(getApplicationContext());
-                if (imageUri == null) {
-                    Toast.makeText(this, R.string.camera_temp_file_error_easy_photos, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-//                cameraPath = imageUri.toString();
+            mediaFile = createCameraTempFile("IMG_", ".jpg");
+            Uri imageUri = null;
+            if (mediaFile != null && mediaFile.exists()) {
+                imageUri = FileProvider.getUriForFile(this, Setting.fileProviderAuthority, mediaFile);
+            }
+            if (imageUri == null) {
+                Toast.makeText(this, R.string.camera_temp_file_error_easy_photos, Toast.LENGTH_SHORT).show();
+                return;
             }
             //对目标应用临时授权该Uri所代表的文件
             cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -101,53 +88,18 @@ public class EasyCameraActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, R.string.msg_no_camera_easy_photos, Toast.LENGTH_SHORT).show();
         }
-//        系统相机录制功能
-//        Intent cameraIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-//        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-//            createCameraTempFile("VIDEO", ".mp4");
-//            if (mTempImageFile != null && mTempImageFile.exists()) {
-//                Uri videoUri;
-//                if (Build.VERSION.SDK_INT >= 24) {
-//                    //通过FileProvider创建一个content类型的Uri
-//                    videoUri = FileProvider.getUriForFile(this, Setting.fileProviderAuthority, mTempImageFile);
-//                } else {
-//                    videoUri = Uri.fromFile(mTempImageFile);
-//                }
-//                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
-//                cameraIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, Setting.recordDuration / 1000);
-//                cameraIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-//                startActivityForResult(cameraIntent, Code.REQUEST_CAMERA);
-//            }
-//        } else {
-//            Toast.makeText(this, R.string.msg_no_camera_easy_photos, Toast.LENGTH_SHORT).show();
-//        }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Nullable
     private File createCameraTempFile(String prefix, String suffix) {
-        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + applicationName);
-        if (!dir.exists() || !dir.isDirectory()) {
-            if (!dir.mkdirs()) {
-                dir = getExternalFilesDir(null);
-                if (null == dir || !dir.exists()) {
-                    dir = getFilesDir();
-                    if (null == dir || !dir.exists()) {
-                        String cacheDirPath = getExternalCacheDir() + File.separator;
-                        dir = new File(cacheDirPath);
-                        if (!dir.exists()) {
-                            dir.mkdirs();
-                        }
-                    }
-                }
-            }
-        }
         try {
+            File dir = getExternalFilesDir(Environment.DIRECTORY_DCIM);
+            dir.mkdirs();
             return File.createTempFile(prefix, suffix, dir);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-
     }
 
     private void toCustomCamera() {
@@ -186,13 +138,9 @@ public class EasyCameraActivity extends AppCompatActivity {
 
     private void initCustomCamera() {
         //视频存储路径
-        if (SystemUtils.beforeAndroidTen()) {
-            // /storage/emulated/0/DCIM/EasyPhotosDemo
-            jCameraView.setSaveVideoPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + applicationName);
-        } else {
-            // /storage/emulated/0/Android/data/com.huantansheng.easyphotos.demo2/files/DCIM/EasyPhotosDemo
-            jCameraView.setSaveVideoPath(getExternalFilesDir(Environment.DIRECTORY_DCIM) + File.separator + applicationName);
-        }
+        File dir = getExternalFilesDir(Environment.DIRECTORY_DCIM);
+        FileUtils.createOrExistsFile(dir);
+        jCameraView.setSaveVideoPath(dir.getPath());
         jCameraView.setFeatures(getFeature());
         jCameraView.setMediaQuality(Setting.RECORDING_BIT_RATE);
         //fixme 录像时间+800ms 修复录像时间少1s问题
@@ -200,18 +148,13 @@ public class EasyCameraActivity extends AppCompatActivity {
         jCameraView.setErrorListener(new ErrorListener() {
             @Override
             public void onError() {
-                //错误监听
-                Intent intent = new Intent();
-                setResult(RESULT_CANCELED, intent);
-                finish();
+                setCancelResult();
             }
 
             @Override
             public void AudioPermissionError() {
                 Toast.makeText(EasyCameraActivity.this, getString(R.string.missing_audio_permission), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                setResult(RESULT_CANCELED, intent);
-                finish();
+                setCancelResult();
             }
         });
         if (Setting.cameraCoverView != null) {
@@ -232,87 +175,80 @@ public class EasyCameraActivity extends AppCompatActivity {
         jCameraView.setJCameraListener(new JCameraListener() {
             @Override
             public void captureSuccess(Bitmap bitmap) {
-                //获取图片bitmap
-                if (SystemUtils.beforeAndroidTen()) {
-                    String path = FileUtil.saveBitmap(applicationName, bitmap);
-                    File file = new File(path);
-                    if (SystemUtils.beforeAndroidN()) {
-                        imageUri = Uri.fromFile(file);
-                    } else {
-                        //通过FileProvider创建一个content类型的Uri
-                        imageUri = FileProvider.getUriForFile(EasyCameraActivity.this, Setting.fileProviderAuthority, file);
-                    }
-                } else {
-                    String path = FileUtil.saveBitmapAndroidQ(EasyCameraActivity.this, applicationName, bitmap);
-                    imageUri = Uri.parse(path);
-                }
+                mediaFile = createCameraTempFile("IMG_", ".jpg");
+                if (mediaFile != null && mediaFile.exists()) {
+                    ImageUtils.save(bitmap, mediaFile, Bitmap.CompressFormat.JPEG);
 
-                Intent intent = new Intent();
-                intent.putExtra(Key.EXTRA_RESULT_CAPTURE_IMAGE_PATH, imageUri);
-                setResult(RESULT_OK, intent);
-                finish();
+                    copyToDCIM(Key.EXTRA_RESULT_CAPTURE_IMAGE_PATH, mediaFile, "image/jpeg");
+                }
             }
 
             @Override
             public void recordSuccess(final String url, Bitmap firstFrame) {
-                //获取视频路径
-                if (SystemUtils.beforeAndroidTen()) {
-                    Intent intent = new Intent();
-                    File file = new File(url);
-                    if (SystemUtils.beforeAndroidN()) {
-                        imageUri = Uri.fromFile(file);
-                    } else {
-                        //通过FileProvider创建一个content类型的Uri
-                        imageUri = FileProvider.getUriForFile(EasyCameraActivity.this, Setting.fileProviderAuthority, file);
-                    }
-                    intent.putExtra(Key.EXTRA_RESULT_CAPTURE_VIDEO_PATH, imageUri);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                } else {
-                    pbProgress.setVisibility(View.VISIBLE);
-                    Future.runAsync(() -> {
-                        String path = FileUtil.copy2DCIMAndroidQ(EasyCameraActivity.this, url, applicationName);
-                        return Uri.parse(path);
-                    }).onSuccess(imageUri -> {
-                        pbProgress.setVisibility(View.GONE);
-                        if (!isFinishing()) {
-                            Intent intent = new Intent();
-                            intent.putExtra(Key.EXTRA_RESULT_CAPTURE_VIDEO_PATH, imageUri);
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        }
-                    });
-                }
+                mediaFile = new File(url);
+                copyToDCIM(Key.EXTRA_RESULT_CAPTURE_VIDEO_PATH, mediaFile, "video/mp4");
             }
         });
 
-        jCameraView.setLeftClickListener(new ClickListener() {
-            @Override
-            public void onClick() {
-                finish();
+        jCameraView.setLeftClickListener(this::finish);
+    }
+
+    private void copyToDCIM(String key, @NonNull File src, String mimeType) {
+        if (pbProgress != null) {
+            pbProgress.setVisibility(View.VISIBLE);
+        }
+        Future.runAsync(() -> {
+            File dir = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DCIM),
+                    applicationName
+            );
+            dir.mkdirs();
+            Uri uri = MediaUtils.createUri(src.getName(), mimeType);
+            if (MediaUtils.writeToUri(uri, src)) {
+                return uri;
+            } else {
+                setCancelResult();
+                return null;
             }
+        }).onSuccess(uri -> {
+            if (pbProgress != null) {
+                pbProgress.setVisibility(View.GONE);
+            }
+            setOkResult(key, uri);
+        }).onFailure(throwable -> {
+            throwable.printStackTrace();
+            setCancelResult();
         });
+    }
+
+    private void setOkResult(@NonNull String key, @NonNull Uri uri) {
+        if (!isFinishing()) {
+            Intent intent = new Intent();
+            intent.putExtra(key, uri);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+    }
+
+    private void setCancelResult() {
+        Intent intent = new Intent();
+        setResult(RESULT_CANCELED, intent);
+        finish();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         //全屏显示
-        if (Build.VERSION.SDK_INT >= 19) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            );
-        } else {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(option);
-        }
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
     }
 
     @Override
@@ -335,6 +271,8 @@ public class EasyCameraActivity extends AppCompatActivity {
     protected void onDestroy() {
         Setting.cameraCoverView = null;
         super.onDestroy();
+
+        FileUtils.delete(mediaFile);
     }
 
     @Override
@@ -344,11 +282,8 @@ public class EasyCameraActivity extends AppCompatActivity {
             finish();
             return;
         }
-        if (resultCode == RESULT_OK && Code.REQUEST_CAMERA == requestCode && imageUri != null) {
-            Intent intent = new Intent();
-            intent.putExtra(Key.EXTRA_RESULT_CAPTURE_IMAGE_PATH, imageUri);
-            setResult(RESULT_OK, intent);
-            finish();
+        if (resultCode == RESULT_OK && Code.REQUEST_CAMERA == requestCode && mediaFile != null) {
+            copyToDCIM(Key.EXTRA_RESULT_CAPTURE_IMAGE_PATH, mediaFile, "image/jpeg");
         }
     }
 }

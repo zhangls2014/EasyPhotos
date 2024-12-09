@@ -44,6 +44,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.blankj.utilcode.util.UriUtils;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.R;
 import com.huantansheng.easyphotos.callback.CompressCallback;
@@ -64,7 +65,6 @@ import com.huantansheng.easyphotos.utils.media.MediaUtils;
 import com.huantansheng.easyphotos.utils.permission.PermissionUtil;
 import com.huantansheng.easyphotos.utils.settings.SettingsUtils;
 import com.huantansheng.easyphotos.utils.system.SystemUtils;
-import com.huantansheng.easyphotos.utils.uri.UriUtils;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -172,7 +172,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
     }
 
     private void hasPermissions() {
-        Setting.fileProviderAuthority = getPackageName() + ".provider";
+        Setting.fileProviderAuthority = getPackageName() + ".photos.provider";
         permissionView.setVisibility(View.GONE);
         if (Setting.onlyStartCamera) {
             launchCamera(Code.REQUEST_CAMERA);
@@ -309,7 +309,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
                     if (uri == null) {
                         uri = data.getParcelableExtra(Key.EXTRA_RESULT_CAPTURE_IMAGE_PATH);
                     }
-                    String path = UriUtils.getPathByUri(uri);
+                    String path = UriUtils.uri2File(uri).getPath();
                     File tempFile = null;
                     if (path != null) tempFile = new File(path);
                     if (tempFile == null || !tempFile.exists()) {

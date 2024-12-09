@@ -1,9 +1,10 @@
 package com.huantansheng.easyphotos.utils.media;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
@@ -11,19 +12,21 @@ import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.core.util.Pair;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.huantansheng.easyphotos.EasyPhotos;
-import com.huantansheng.easyphotos.constant.Type;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
-import com.huantansheng.easyphotos.setting.Setting;
-import com.huantansheng.easyphotos.utils.uri.UriUtils;
 import com.huantansheng.easyphotos.utils.system.SystemUtils;
+import com.huantansheng.easyphotos.utils.uri.UriUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MediaUtils {
 
@@ -64,48 +67,107 @@ public class MediaUtils {
         return DateUtils.formatElapsedTime((long) (seconds + 0.5));
     }
 
-    /**
-     * 创建一条图片地址uri,用于保存拍照后的照片
-     */
-    @Nullable
-    public static Uri createImageUri(final Context context) {
-        String status = Environment.getExternalStorageState();
-        String time = String.valueOf(System.currentTimeMillis());
+    public static Uri createUri(String displayName, String mimeType) {
+        long now = System.currentTimeMillis();
+        ;
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_" + time);
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.Images.Media.DATE_TAKEN, time);
-        // 判断是否有SD卡,优先使用SD卡存储,当没有SD卡时使用手机存储
-        if (status.equals(Environment.MEDIA_MOUNTED)) {
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera");
-            return context.getContentResolver()
-                    .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, displayName);
+        values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
+        values.put(MediaStore.MediaColumns.DATE_ADDED, now / 1000);
+        values.put(MediaStore.MediaColumns.DATE_MODIFIED, now / 1000);
+
+        if (!SystemUtils.beforeAndroidTen()) {
+            values.put(
+                    // Added in API level 29
+                    MediaStore.MediaColumns.RELATIVE_PATH,
+                    Environment.DIRECTORY_DCIM + File.separator + AppUtils.getAppName()
+            );
+        }
+
+        Uri uri = getUri(mimeType);
+        return EasyPhotos.getApp().getContentResolver().insert(uri, values);
+    }
+
+    private static Uri getUri(String mimeType) {
+        boolean enable = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        Uri uri;
+        if (mimeType.startsWith("image") && enable) {
+            uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if (mimeType.startsWith("image")) {
+            uri = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
+        } else if (mimeType.startsWith("video") && enable) {
+            uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         } else {
-            return context.getContentResolver()
-                    .insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, values);
+            uri = MediaStore.Video.Media.INTERNAL_CONTENT_URI;
+        }
+        return uri;
+    }
+
+    public static boolean writeToUri(@NonNull Uri uri, @NonNull File src) {
+        ContentResolver resolver = EasyPhotos.getApp().getContentResolver();
+        try {
+            InputStream is = null;
+            final ContentValues values = new ContentValues();
+
+            if (!SystemUtils.beforeAndroidTen()) {
+                values.put(MediaStore.MediaColumns.IS_PENDING, 1);
+                resolver.update(uri, values, null, null);
+            }
+
+            OutputStream os = resolver.openOutputStream(uri);
+            if (os == null) {
+                return false;
+            }
+            int read;
+            if (src.exists()) {
+                is = new FileInputStream(src);
+                byte[] buffer = new byte[4096];
+                while ((read = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                }
+            }
+            if (is != null) is.close();
+            os.close();
+
+            if (!SystemUtils.beforeAndroidTen()) {
+                values.clear();
+                values.put(MediaStore.MediaColumns.IS_PENDING, 0);
+                resolver.update(uri, values, null, null);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            resolver.delete(uri, null, null);
+            return false;
         }
     }
 
+    public static boolean writeToUri(@NonNull Uri uri, @NonNull Bitmap bitmap) {
+        ContentResolver resolver = EasyPhotos.getApp().getContentResolver();
+        try {
+            final ContentValues values = new ContentValues();
+            values.put(MediaStore.MediaColumns.IS_PENDING, 1);
+            resolver.update(uri, values, null, null);
 
-    /**
-     * 创建一条视频地址uri,用于保存录制的视频
-     */
-    @Nullable
-    public static Uri createVideoUri(final Context context) {
-        String status = Environment.getExternalStorageState();
-        String time = String.valueOf(System.currentTimeMillis());
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Video.Media.DISPLAY_NAME, "VID_" + time);
-        values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
-        values.put(MediaStore.Video.Media.DATE_TAKEN, time);
-        // 判断是否有SD卡,优先使用SD卡存储,当没有SD卡时使用手机存储
-        if (status.equals(Environment.MEDIA_MOUNTED)) {
-            values.put(MediaStore.Video.Media.RELATIVE_PATH, "DCIM/Camera");
-            return context.getContentResolver()
-                    .insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
-        } else {
-            return context.getContentResolver()
-                    .insert(MediaStore.Video.Media.INTERNAL_CONTENT_URI, values);
+            OutputStream os = resolver.openOutputStream(uri);
+            if (os == null) {
+                return false;
+            }
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            os.flush();
+            os.close();
+
+            values.clear();
+            values.put(MediaStore.MediaColumns.IS_PENDING, 0);
+            resolver.update(uri, values, null, null);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            resolver.delete(uri, null, null);
+            return false;
         }
     }
 

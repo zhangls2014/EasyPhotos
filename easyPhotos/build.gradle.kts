@@ -57,6 +57,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.4.1")
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
     implementation("com.github.yalantis:ucrop:2.2.8")
+    implementation("com.blankj:utilcodex:1.31.1")
 }
 
 afterEvaluate {

@@ -23,11 +23,11 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.huantansheng.cameralibrary.listener.ErrorListener;
 import com.huantansheng.cameralibrary.util.AngleUtil;
 import com.huantansheng.cameralibrary.util.CameraParamUtil;
 import com.huantansheng.cameralibrary.util.CheckPermission;
-import com.huantansheng.cameralibrary.util.FileUtil;
 import com.huantansheng.cameralibrary.util.LogUtil;
 import com.huantansheng.cameralibrary.util.ScreenUtils;
 
@@ -669,7 +669,7 @@ public class CameraInterface implements Camera.PreviewCallback {
                 isRecorder = false;
             }
             if (isShort) {
-                if (FileUtil.deleteFile(videoFileAbsPath)) {
+                if (FileUtils.delete(videoFileAbsPath)) {
                     callback.recordResult(null, null);
                 }
                 return;
